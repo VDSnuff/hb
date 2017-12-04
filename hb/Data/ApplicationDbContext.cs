@@ -15,6 +15,12 @@ namespace hb.Data
         {
         }
 
+        public DbSet<Transaction> Transactions { get; set; }
+
+        public DbSet<BankAccount> BankAccounts { get; set; }
+
+        public DbSet<Currency> Currencies { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
