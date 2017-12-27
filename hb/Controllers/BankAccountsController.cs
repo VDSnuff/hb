@@ -22,7 +22,7 @@ namespace hb.Controllers
         // GET: BankAccounts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BankAccounts.ToListAsync());
+            return View(await _context.BankAccounts.Include("Currency").ToListAsync());
         }
 
         // GET: BankAccounts/Details/5
@@ -46,7 +46,20 @@ namespace hb.Controllers
         // GET: BankAccounts/Create
         public IActionResult Create()
         {
-            return View();
+            try
+            {
+                var model = new BankAccount();
+
+                var currenciCode = (from c in _context.Currencies select c).OrderBy(c => c.Country).Select(c => new { Id = c.Id, Value = c.CountryCode });
+
+                model.CurrencyList = new SelectList(currenciCode, "Id", "Value");
+
+                return View(model);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // POST: BankAccounts/Create
@@ -54,11 +67,19 @@ namespace hb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,Title,Balance")] BankAccount bankAccount)
+        public async Task<IActionResult> Create([Bind("Id,Number,Title,Balance,Currency")] BankAccount bankAccount)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(bankAccount);
+                var newAccount = new BankAccount
+                {
+                    Balance = bankAccount.Balance,
+                    Currency = (from c in _context.Currencies select c).Where(c => c.Id == bankAccount.Currency.Id).FirstOrDefault(),
+                    Number = bankAccount.Number,
+                    Title = bankAccount.Title
+                };
+
+                _context.Add(newAccount);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

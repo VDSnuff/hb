@@ -4,14 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace hb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171204214548_AddResiverList")]
+    partial class AddResiverList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,6 +58,8 @@ namespace hb.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int?>("ReciverListId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -71,6 +76,8 @@ namespace hb.Data.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("ReciverListId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -112,6 +119,16 @@ namespace hb.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Currencies");
+                });
+
+            modelBuilder.Entity("hb.Models.Reciver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reciver");
                 });
 
             modelBuilder.Entity("hb.Models.Transaction", b =>
@@ -254,6 +271,13 @@ namespace hb.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("hb.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("hb.Models.Reciver", "ReciverList")
+                        .WithMany("ReciverList")
+                        .HasForeignKey("ReciverListId");
                 });
 
             modelBuilder.Entity("hb.Models.BankAccount", b =>

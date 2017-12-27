@@ -14,5 +14,7 @@ namespace hb.Models
         public string LastName { get; set; }
         [Required]
         public string FirstName { get; set; }
+
+        public List<BankAccount> BankAccounts { get; set; }
     }
 }
