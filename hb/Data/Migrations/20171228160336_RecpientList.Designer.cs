@@ -11,9 +11,10 @@ using System;
 namespace hb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171228160336_RecpientList")]
+    partial class RecpientList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,28 +115,6 @@ namespace hb.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Currencies");
-                });
-
-            modelBuilder.Entity("hb.Models.RecipientList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("RecipientAccountId");
-
-                    b.Property<string>("RecipientId");
-
-                    b.Property<string>("SenderId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipientAccountId");
-
-                    b.HasIndex("RecipientId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Recipient");
                 });
 
             modelBuilder.Entity("hb.Models.Transaction", b =>
@@ -289,21 +268,6 @@ namespace hb.Data.Migrations
                     b.HasOne("hb.Models.ApplicationUser", "User")
                         .WithMany("BankAccounts")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("hb.Models.RecipientList", b =>
-                {
-                    b.HasOne("hb.Models.BankAccount", "RecipientAccount")
-                        .WithMany()
-                        .HasForeignKey("RecipientAccountId");
-
-                    b.HasOne("hb.Models.ApplicationUser", "Recipient")
-                        .WithMany()
-                        .HasForeignKey("RecipientId");
-
-                    b.HasOne("hb.Models.ApplicationUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId");
                 });
 
             modelBuilder.Entity("hb.Models.Transaction", b =>

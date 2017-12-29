@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using hb.Data;
 using hb.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using hb.Models.TransactionViewModels;
 
 namespace hb.Controllers
 {
@@ -19,9 +22,12 @@ namespace hb.Controllers
             _context = context;
         }
 
+
+
         // GET: Transactions
         public async Task<IActionResult> Index()
         {
+
             return View(await _context.Transactions.ToListAsync());
         }
 
@@ -46,7 +52,19 @@ namespace hb.Controllers
         // GET: Transactions/Create
         public IActionResult Create()
         {
-            return View();
+            string CurrentUserId = ViewBag.userId;
+
+            CreateTransaction model = new CreateTransaction();
+            //List<RecipientList> recipients = new List<RecipientList>();
+            //List<BankAccount> bankAccounts = new List<BankAccount>();
+
+            var recipients = _context.Recipient.Where(r => r.Sender.Id == CurrentUserId).Select(r => new { Id = r.Id, Value = r.Recipient.UserName });
+            var bankAccounts = _context.BankAccounts.Where(a => a.User.Id == CurrentUserId).Select(b => new { Id = b.Id, Value = b.Number }); ;
+
+            model.BankAccountsList = new SelectList(bankAccounts, "Id", "Value");
+            model.RecipientsList = new SelectList(recipients, "Id", "Value");
+
+            return View(model);
         }
 
         // POST: Transactions/Create

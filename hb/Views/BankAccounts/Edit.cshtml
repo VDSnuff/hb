@@ -15,8 +15,9 @@
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Number" class="control-label"></label>
-                <input asp-for="Number" class="form-control" />
+                <input asp-for="Number" disabled class="form-control" />
                 <span asp-validation-for="Number" class="text-danger"></span>
+                @Html.HiddenFor(n => n.Number)
             </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>

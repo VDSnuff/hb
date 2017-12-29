@@ -5,13 +5,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using hb.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace hb.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public HomeController(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
         public IActionResult Index()
         {
+            ViewBag.userId = _userManager.GetUserId(HttpContext.User);
+
             return View();
         }
 

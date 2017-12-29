@@ -11,9 +11,10 @@ using System;
 namespace hb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171228162809_RecipientList2")]
+    partial class RecipientList2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,15 +122,11 @@ namespace hb.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("RecipientAccountId");
-
                     b.Property<string>("RecipientId");
 
                     b.Property<string>("SenderId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RecipientAccountId");
 
                     b.HasIndex("RecipientId");
 
@@ -293,10 +290,6 @@ namespace hb.Data.Migrations
 
             modelBuilder.Entity("hb.Models.RecipientList", b =>
                 {
-                    b.HasOne("hb.Models.BankAccount", "RecipientAccount")
-                        .WithMany()
-                        .HasForeignKey("RecipientAccountId");
-
                     b.HasOne("hb.Models.ApplicationUser", "Recipient")
                         .WithMany()
                         .HasForeignKey("RecipientId");

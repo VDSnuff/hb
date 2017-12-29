@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using hb.Data;
 using hb.Models;
+using hb.BL;
 
 namespace hb.Controllers
 {
@@ -54,7 +55,12 @@ namespace hb.Controllers
 
                 model.CurrencyList = new SelectList(currenciCode, "Id", "Value");
 
+                BusinessLogic bl = new BusinessLogic(_context);
+
+                model.Number = bl.GenerateNumber();
+
                 return View(model);
+
             }
             catch (Exception)
             {
