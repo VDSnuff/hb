@@ -28,11 +28,27 @@
                 <span asp-validation-for="Transaction.Sum" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="NewRecipient" class="control-label"></label>
+                <input asp-for="NewRecipient" class="form-control" />
+                <span asp-validation-for="NewRecipient" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BankAccounts.Number" class="control-label"></label>
+                <br /> <select asp-for="BankAccounts.Number" asp-items="@Model.SenderBankAccountsList"></select>
+            </div>
+            @*<div class="form-group">
+            <label asp-for="NewBankAccount" class="control-label"></label>
+            <input asp-for="NewBankAccount" class="form-control" />
+            <span asp-validation-for="NewBankAccount" class="text-danger"></span>
+        </div>*@
+            <br />
+            <h4>Predefined Recipient?</h4>
+            <div class="form-group">
                 <label asp-for="Recipients.Recipient" class="control-label"></label>
                 <br /> <select asp-for="Recipients.Recipient" asp-items="@Model.RecipientsList"></select>
             </div>
             <div class="form-group">
-                <label asp-for="BankAccount.B" class="control-label"></label>
+                <label asp-for="BankAccounts.Number" class="control-label"></label>
                 <br /> <select asp-for="BankAccounts.Number" asp-items="@Model.BankAccountsList"></select>
             </div>
             <div class="form-group">
