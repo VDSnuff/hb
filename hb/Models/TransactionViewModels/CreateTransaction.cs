@@ -9,33 +9,27 @@ namespace hb.Models.TransactionViewModels
 {
     public class CreateTransaction
     {
-        public Transaction Transaction { get; set; }
-
-        public BankAccount BankAccounts { get; set; }
-
-        public BankAccount SenderBankAccounts { get; set; }
-
-        public RecipientList Recipients { get; set; }
-
+        [Required]
+        public string Title { get; set; }
+        [Required]
+        public DateTime Date { get; set; }
+        [Required]
+        public decimal Sum { get; set; }
+        [Required]
         [Display(Name = "Recipient")]
-        public string NewRecipient { get; set; }
-
-        [Display(Name = "Bank Account")]
-        public int NewBankAccount { get; set; }
-
-        public SelectList BankAccountsList { get; set; }
-
-        public SelectList RecipientsList { get; set; }
-
+        public string RecipientUniqueName { get; set; }
+        [Required]
+        [Display(Name = "Recipient Account Number")]
+        public int RecipientBankAccount { get; set; }
+        [Display(Name = "Your Account Number")]
+        public int SenderBankAccountId { get; set; }
         public SelectList SenderBankAccountsList { get; set; }
-
-        public CreateTransaction()
-        {
-            this.Transaction = new Transaction();
-            this.BankAccounts = new BankAccount();
-            this.Recipients = new RecipientList();
-            this.SenderBankAccounts = new BankAccount();
-        }
-
+        
+        //public SelectList PredefinedRecipientsBankAccountsList { get; set; }
+        //public SelectList PredefinedRecipientsList { get; set; }
+        //public CreateTransaction()
+        //{
+        //    this.NewTransaction = new Transaction();
+        //}
     }
 }

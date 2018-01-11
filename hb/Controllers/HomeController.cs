@@ -6,22 +6,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using hb.Models;
 using Microsoft.AspNetCore.Identity;
+using hb.Data;
 
 namespace hb.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public HomeController(UserManager<ApplicationUser> userManager)
-        {
-            _userManager = userManager;
-        }
+        public HomeController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context) { }
+      
+        //  public HomeController(UserManager<ApplicationUser> userManager) : base(userManager) { }
 
         public IActionResult Index()
         {
-            ViewBag.userId = _userManager.GetUserId(HttpContext.User);
-
             return View();
         }
 
