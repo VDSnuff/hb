@@ -15,6 +15,7 @@ namespace hb.Controllers
 {
     public class TransactionsController : BaseController
     {
+        
         public TransactionsController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context) { }
 
 
@@ -59,23 +60,26 @@ namespace hb.Controllers
         //        Date = DateTime.Now,
         //        Sum = 1.00
         //    };
-        
+
         //    return View(viewModel);
         //}
 
         // GET: Transactions/Create
         public IActionResult Create()
         {
-            string currentUserId = ViewBag.userId;
-            var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
-            CreateTransaction viewModel = new CreateTransaction
-            {
-                SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value"),
-                Title = "Default Transaction",
-                Date = DateTime.Now,
-                Sum = 1
-            };
-            return View(viewModel);
+            string currentUserId = _userManager.GetUserId(HttpContext.User);
+            
+                var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+
+                CreateTransaction viewModel = new CreateTransaction
+                {
+                    SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value"),
+                    Title = "Default Transaction",
+                    Date = DateTime.Now,
+                    Sum = 1
+                };
+                return View(viewModel);
+            
         }
 
         // POST: Transactions/Create
@@ -88,22 +92,37 @@ namespace hb.Controllers
         {
             try
             {
-                string currentUserId = ViewBag.userId;
+                string currentUserId = _userManager.GetUserId(HttpContext.User);
 
                 if (ModelState.IsValid)
                 {
                     var recipientBankAccount = _context.BankAccounts.Where(x => x.Number == newTransaction.RecipientBankAccount).FirstOrDefault();
                     var recipientUniqueName = _context.Users.Where(x => x.NormalizedUserName == newTransaction.RecipientUniqueName.ToUpper().Trim()).FirstOrDefault();
+                    var senderAccountAmount = _context.BankAccounts.Where(s => s.Id == newTransaction.SenderBankAccountId).FirstOrDefault();
+
+                    //If Adding Errore
+                    if (senderAccountAmount.Balance < newTransaction.Sum)
+                    {
+                        var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+                        newTransaction.SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value");
+                        ModelState.AddModelError("Sum", "Not enough amount of money on your account");
+                        return View(newTransaction);
+                    }
                     if (recipientUniqueName == null)
                     {
+                        var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+                        newTransaction.SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value");
                         ModelState.AddModelError("RecipientUniqueName", "Recipient name does not exist.");
-                        return View();
+                        return View(newTransaction);
                     }
                     if (recipientBankAccount == null)
                     {
+                        var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+                        newTransaction.SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value");
                         ModelState.AddModelError("RecipientBankAccount", "Recipient account number does not exist.");
-                        return View();
+                        return View(newTransaction);
                     }
+                   
 
                     Transaction transaction = new Transaction()
                     {
@@ -116,6 +135,8 @@ namespace hb.Controllers
                         ReciverAccount = _context.BankAccounts.Where(s => s.Number == newTransaction.RecipientBankAccount).FirstOrDefault()
                     };
 
+                    senderAccountAmount.Balance = senderAccountAmount.Balance - newTransaction.Sum;
+                    recipientBankAccount.Balance = recipientBankAccount.Balance + newTransaction.Sum;
                     _context.Add(transaction);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));

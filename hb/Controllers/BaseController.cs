@@ -12,7 +12,6 @@ namespace hb.Controllers
     public class BaseController : Controller
     {
         protected readonly UserManager<ApplicationUser> _userManager;
-
         protected readonly ApplicationDbContext _context;
 
         public BaseController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)

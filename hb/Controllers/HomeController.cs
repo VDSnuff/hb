@@ -14,7 +14,7 @@ namespace hb.Controllers
     {
         public HomeController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context) { }
       
-        //  public HomeController(UserManager<ApplicationUser> userManager) : base(userManager) { }
+       //   public HomeController(UserManager<ApplicationUser> userManager) : base(userManager) { }
 
         public IActionResult Index()
         {
