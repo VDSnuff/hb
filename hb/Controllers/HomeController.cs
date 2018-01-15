@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using hb.Models;
 using Microsoft.AspNetCore.Identity;
 using hb.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace hb.Controllers
 {
+    [Authorize]
     public class HomeController : BaseController
     {
         public HomeController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context) { }

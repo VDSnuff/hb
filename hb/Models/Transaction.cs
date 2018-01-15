@@ -17,13 +17,11 @@ namespace hb.Models
         public string Title { get; set; }
         [Required]
         public decimal Sum { get; set; }
-
         public ApplicationUser Sender { get; set; }
-
         public ApplicationUser Reciver { get; set; }
-     
+        [Display(Name = "Sender Account Number")]
         public BankAccount SenderAccount { get; set; }
-     
+        [Display(Name = "Reciver Account Number")]
         public BankAccount ReciverAccount { get; set; }
 
     }

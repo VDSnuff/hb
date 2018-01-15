@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using hb.Data;
 using hb.Models;
 using hb.BL;
+using Microsoft.AspNetCore.Authorization;
 
 namespace hb.Controllers
 {
+    [Authorize]
     public class BankAccountsController : Controller
     {
         private readonly ApplicationDbContext _context;

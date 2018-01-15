@@ -8,6 +8,7 @@ namespace hb.Models.ManageViewModels
 {
     public class IndexViewModel
     {
+        [Display(Name = "Name")]
         public string Username { get; set; }
 
         public bool IsEmailConfirmed { get; set; }

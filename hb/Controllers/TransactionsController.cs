@@ -10,20 +10,17 @@ using hb.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using hb.Models.TransactionViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace hb.Controllers
 {
+    [Authorize]
     public class TransactionsController : BaseController
     {
-        
         public TransactionsController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context) { }
 
-
         // GET: Transactions
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Transactions.ToListAsync());
-        }
+        public async Task<IActionResult> Index() => View(await _context.Transactions.Include(a => a.ReciverAccount).Include(u => u.Reciver).Include(c => c.SenderAccount.Currency).ToListAsync());
 
         // GET: Transactions/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -42,27 +39,6 @@ namespace hb.Controllers
 
             return View(transaction);
         }
-
-        //// GET: Transactions/Create
-        //public IActionResult Create()
-        //{
-        //    string currentUserId = ViewBag.userId;
-        //    // var predefinedRecipientsList = _context.Recipient.Where(r => r.Sender.Id == currentUserId).Select(r => new { Id = r.Id, Value = r.Recipient.UserName });
-        //     var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
-        //    //var predefinedRecipientsBankAccountsList = _context.
-
-        //    CreateTransaction viewModel = new CreateTransaction
-        //    {
-        //        SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value"),
-        //       // PredefinedRecipientsList = new SelectList(predefinedRecipientsList, "Id", "Value"),
-        //       // PredefinedRecipientsBankAccountsList = new SelectList(predefinedRecipientsBankAccountsList, "Id", "Value"),
-        //        Title = "Default Transaction",
-        //        Date = DateTime.Now,
-        //        Sum = 1.00
-        //    };
-
-        //    return View(viewModel);
-        //}
 
         // GET: Transactions/Create
         public IActionResult Create()
@@ -122,12 +98,11 @@ namespace hb.Controllers
                         ModelState.AddModelError("RecipientBankAccount", "Recipient account number does not exist.");
                         return View(newTransaction);
                     }
-                   
 
                     Transaction transaction = new Transaction()
                     {
                         Date = newTransaction.Date,
-                        Sender = ViewBag.userId,
+                        Sender = _context.Users.Where(s => s.Id == currentUserId).FirstOrDefault(),
                         Reciver = _context.Users.Where(r => r.NormalizedUserName == newTransaction.RecipientUniqueName).FirstOrDefault(),
                         Title = newTransaction.Title,
                         Sum = newTransaction.Sum,

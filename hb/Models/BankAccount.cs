@@ -12,20 +12,15 @@ namespace hb.Models
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
         public int Number { get; set; }
-
         [Required]
         public string Title { get; set; }
-
         [Required]
         public decimal Balance { get; set; }
-
         public Currency Currency { get; set; }
-
+        [Display(Name = "Reciver")]
         public ApplicationUser User { get; set; }
-
         [NotMapped]
         public SelectList CurrencyList { get; set; }
     }
