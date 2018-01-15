@@ -26,11 +26,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Banking System MMM</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"> <span style="color:orange; font-size:15pt;">MMM</span> Banking System</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    @*<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>*@
                     @*<li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>*@
                     @*<li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>*@
                     <li><a asp-area="" asp-controller="BankAccounts" asp-action="Index">Your Accounts</a></li>
@@ -43,7 +43,7 @@
     <div class="container body-content">
         @RenderBody()
        @* <hr />*@
-        <footer style="background-color:dimgray; color:aliceblue; padding:20pt;" >
+        <footer style="background-color:dimgray; color:aliceblue; padding:15pt;" >
             <p style="padding-left:40%;">&copy; 2017 - Banking System MMM</p>
         </footer>
     </div>
