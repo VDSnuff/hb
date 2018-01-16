@@ -1,0 +1,55 @@
+﻿@model IEnumerable<hb.Models.RecipientList>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Recipient List</h2>
+<p>
+    <a asp-action="Create">Create New Recipient</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Recipient.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().RecipientAccount.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().RecipientAccount.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().RecipientAccount.Currency)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Recipient.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecipientAccount.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecipientAccount.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecipientAccount.Currency.CountryCode)
+            </td>
+            <td>
+                @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |*@
+                <a class="btn btn-success" asp-controller="Transactions" asp-action="CreateFromRecipientList" asp-route-id="@item.Id">Create Transaction</a> 
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<br />
+<br />

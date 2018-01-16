@@ -124,6 +124,105 @@ namespace hb.Controllers
             }
         }
 
+
+
+
+
+
+        // GET: Transactions/Create
+        public IActionResult CreateFromRecipientList(int id)
+        {
+            string currentUserId = _userManager.GetUserId(HttpContext.User);
+
+            var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+
+            var predefinedRecipient = _context.Recipient.Include(r => r.Sender).Include(r => r.Recipient).Include(a => a.RecipientAccount).Include(c => c.RecipientAccount.Currency).FirstOrDefault(m => m.Id == id);
+
+            CreateTransaction viewModel = new CreateTransaction
+            {
+                SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value"),
+                Title = "Default Transaction",
+                Date = DateTime.Now,
+                Sum = 1,
+                RecipientBankAccount = predefinedRecipient.RecipientAccount.Number,
+                RecipientUniqueName = predefinedRecipient.Recipient.UserName
+            };
+            return View("Create", viewModel);
+
+        }
+
+        // POST: Transactions/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,Date,Title,Sum")] Transaction transaction)
+        public async Task<IActionResult> CreateFromRecipientList(CreateTransaction newTransaction)
+        {
+            try
+            {
+                string currentUserId = _userManager.GetUserId(HttpContext.User);
+
+                if (ModelState.IsValid)
+                {
+                    var recipientBankAccount = _context.BankAccounts.Where(x => x.Number == newTransaction.RecipientBankAccount).FirstOrDefault();
+                    var recipientUniqueName = _context.Users.Where(x => x.NormalizedUserName == newTransaction.RecipientUniqueName.ToUpper().Trim()).FirstOrDefault();
+                    var senderAccountAmount = _context.BankAccounts.Where(s => s.Id == newTransaction.SenderBankAccountId).FirstOrDefault();
+
+                    //If Adding Errore
+                    if (senderAccountAmount.Balance < newTransaction.Sum)
+                    {
+                        var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+                        newTransaction.SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value");
+                        ModelState.AddModelError("Sum", "Not enough amount of money on your account");
+                        return View(newTransaction);
+                    }
+                    if (recipientUniqueName == null)
+                    {
+                        var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+                        newTransaction.SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value");
+                        ModelState.AddModelError("RecipientUniqueName", "Recipient name does not exist.");
+                        return View(newTransaction);
+                    }
+                    if (recipientBankAccount == null)
+                    {
+                        var senderBankAccountsList = _context.BankAccounts.Where(a => a.User.Id == currentUserId).Select(b => new { Id = b.Id, Value = b.Number });
+                        newTransaction.SenderBankAccountsList = new SelectList(senderBankAccountsList, "Id", "Value");
+                        ModelState.AddModelError("RecipientBankAccount", "Recipient account number does not exist.");
+                        return View(newTransaction);
+                    }
+
+                    Transaction transaction = new Transaction()
+                    {
+                        Date = newTransaction.Date,
+                        Sender = _context.Users.Where(s => s.Id == currentUserId).FirstOrDefault(),
+                        Reciver = _context.Users.Where(r => r.NormalizedUserName == newTransaction.RecipientUniqueName).FirstOrDefault(),
+                        Title = newTransaction.Title,
+                        Sum = newTransaction.Sum,
+                        SenderAccount = _context.BankAccounts.Where(s => s.Id == newTransaction.SenderBankAccountId).FirstOrDefault(),
+                        ReciverAccount = _context.BankAccounts.Where(s => s.Number == newTransaction.RecipientBankAccount).FirstOrDefault()
+                    };
+
+                    senderAccountAmount.Balance = senderAccountAmount.Balance - newTransaction.Sum;
+                    recipientBankAccount.Balance = recipientBankAccount.Balance + newTransaction.Sum;
+                    _context.Add(transaction);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(newTransaction);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+
+
+
+
         // GET: Transactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

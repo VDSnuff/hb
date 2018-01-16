@@ -1,0 +1,40 @@
+﻿@model hb.Models.RecipientList
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Recipient)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Recipient.UserName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RecipientAccount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RecipientAccount.Number)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RecipientAccount.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RecipientAccount.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RecipientAccount.Currency)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RecipientAccount.Currency.CountryCode)
+        </dd>
+    </dl>
+    </div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
